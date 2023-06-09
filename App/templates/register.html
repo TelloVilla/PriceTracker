@@ -1,0 +1,33 @@
+{% extends "header.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col col-lg-3">
+            <form action="" method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label"> Email Address</label>
+                    <input name="email" type="email" class="form-control" id="emailInput" aria-describedby="email">
+                </div>
+                <div>
+                    <label for="user" class="form-label">Username</label>
+                    <input name="user" type="text" class="form-control" aria-describedby="username">
+                </div>
+                <div class="mb-3">
+                    <label for="passwordInput1" class="form-label">Password</label>
+                    <input name="password1" type="password" class="form-control" id="passwordInput1" aria-describedby="password">
+                </div>
+                <div class="mb-3">
+                    <label for="passwordInput2" class="form-label">Retype Password</label>
+                    <input name="password2" type="password" class="form-control" id="passwordInput2" aria-describedby="retype password">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+    </div>
+    
+</div>
+
+{% endblock %}
