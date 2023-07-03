@@ -1,0 +1,63 @@
+{% extends "header.html" %}
+{% block title %}Items{% endblock %}
+
+{% block content %}
+<script src="{{url_for('static', filename='item-view.js')}}"></script>
+<link href="{{url_for('static', filename='item-view.css')}}" rel="stylesheet" type="text/css" />
+<script>
+    const item_prices = '{{item.prices | tojson}}'
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col col-lg-6">
+            <h3>Items: {{item.name}}</h3>
+            <form action="{{'/item/' + item.id + '/price'}}" method="post">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Date:</span>
+                    <input name="price-date" class="form-control" type="date">
+                    <span class="input-group-text">Price:</span>
+                    <input name="price-val" type="number" step="any">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+        <div class="col col-lg-6">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-6-auto" id="price-display">
+
+        </div>
+        <div class="col col-6-auto" id="price-stats">
+            <h6>Average Price:</h6>
+            <span id="price-avg"></span>
+        </div>
+    </div>
+    <div class="graphtip">
+    </div>
+    <div class="offcanvas offcanvas-bottom priceEdit" tabindex="-1" id="priceEditCanvas" aria-labelledby="priceEditLabel">
+        <div class="offcanvas-header">
+            <h6 class="offcanvas-title" id="priceEditLabel">Edit Price</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-3">
+                    <form action="{{'/item/' + item.id + '/edit'}}" method="post">
+                        <div class="input-group mb-3">
+                            <label class="form-control" for="priceid">Price ID:</label>
+                            <input class="form-control" type="text" name="priceid" id="priceid" readonly>
+                            <span class="input-group-text">$</span>
+                            <input class="form-control" type="number" step="any" name="price-edit" id="price-edit">
+                            <button name="edit" type="submit" class="btn btn-primary">Edit</button>
+                            <button name="delete" type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+.graphtip {
+    position: absolute;
+    visibility: hidden;
+    height: 50px;
+    width: 200px;
+    padding: 5px;
+    background-color:  #30485E;
+    border: solid 2px black;
+    border-radius: 3px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    text-align: center;
+    font-size: 13px;
+    transition: visibility 1.5s;
+}
+
+.price-edit-btn{
+    visibility: hidden;
+}

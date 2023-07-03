@@ -1,0 +1,62 @@
+{% extends "header.html" %}
+{% block title %}Hub{% endblock %}
+
+{% block content %}
+<script src="{{url_for('static', filename='lists-view.js')}}"></script>
+<link href="{{url_for('static', filename='list-view.css')}}" rel="stylesheet" type="text/css"/>
+<script>
+    const Lists = '{{lists | tojson}}'
+</script>
+<div class="container">
+    <div class="row justify-content-md-center mb-3">
+        <div class="col col-lg-4">
+            <form action="/lists/add" method="post">
+                <div class="input-group">
+                    <label class="form-control" for="list-name">List Name:</label>
+                    <input class="form-control" name="list-name" id="list-name" type="text">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col col-lg-6">
+            <select class="form-select" name="" id="">
+                {% for list in lists %}
+                <option class="show-class" data-bs-toggle="collapse" data-bs-target="{{'#' + list['id']}}" value="{{list['name']}}" selected>{{list["name"]}}</option>
+                {% endfor %}
+            </select>
+            {% for list in lists %}
+            <ul class="collapse list-group mt-3" id="{{list['id']}}">
+                {% for item in list["items"] %}
+                <li class="list-group-item">
+                    <form action="/lists/{{list['id']}}/update" method="post">
+                        <div class="input-group float-start">
+                            <span class="input-group-text id-form">Item id:</span>
+                            <input type="text" class="form-control id-form" name="item-id" value="{{item.id}}" readonly>
+                            <span class="input-group-text">{{item.name}}</span>
+                            <span class="input-group-text">Qty:</span>
+                            <input class="form-control" name="item-qty" value="{{item.qty}}" type="number">
+                            <span class="input-group-text">Total:</span>
+                            <input id="{{list['id']}}" type="number" class="form-control item-price" step="any" value="{{item.price.price * item.qty}}" readonly>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </li>
+                {% endfor %}
+                <li class="list-group-item">
+                    <span id="{{list['id'] + '-total-price'}}" class="float-end">Total: </span>
+                </li>
+                <li class="list-group-item">
+                    <form action="/lists/{{list['id']}}/delete">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-danger float-end">Delete List</button>
+                    </form>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -2,14 +2,37 @@
 {% block title %}Items{% endblock %}
 
 {% block content %}
+<script src="{{url_for('static', filename='view-all.js')}}"></script>
+<link href="{{url_for('static', filename='view.css')}}" rel="stylesheet" type="text/css" />
+<script>
+    const items = '{{items | tojson}}'
+</script>
 <div class="container">
     <div class="row justify-content-md-center">
         <div class="col col-lg-6">
             <h3>Items</h3>
             {% for item in items %}
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <h3 class="card-title"></h3>
+                    <h3 class="card-title">{{ item["name"]}}</h3>
+                    <p class="card-text">
+                        {{ item["desc"]}}
+                        <span id="{{item.id}}" class="float-end">Recent Price:</span>
+                    </p>
+                    <a class="btn btn-primary float-start" href="{{'/item/' + item.id}}">Track</a>
+                    <div class="dropdown float-start ms-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Add to List
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for list in lists %}
+                            <li><a class="dropdown-item" href="{{'/lists/' + list.id + '/addItem/' + item.id}}">{{ list["name"]}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <form class="float-end" action="{{'/item/' + item.id + '/delete'}}" method="post">
+                        <input class="btn btn-danger item-delete" type="submit" value="Delete">
+                    </form>
                 </div>
             </div>
             {% endfor %}
