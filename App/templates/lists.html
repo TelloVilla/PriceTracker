@@ -9,12 +9,12 @@
 </script>
 <div class="container">
     <div class="row justify-content-md-center mb-3">
-        <div class="col col-lg-4">
+        <div class="col col-lg-6 col-sm-8">
             <form action="/lists/add" method="post">
                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                 <div class="input-group">
-                    <label class="form-control" for="list-name">List Name:</label>
-                    <input class="form-control" name="list-name" id="list-name" type="text">
+                    <span class="input-group-text">List Name: </span>
+                    <input class="form-control form-control-lg" name="list-name" id="list-name" type="text">
                     <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </form>
@@ -22,9 +22,9 @@
     </div>
     <div class="row justify-content-md-center">
         <div class="col col-lg-8 list-control">
-            <select class="form-select" name="" id="">
+            <select class="form-select form-select-lg" name="" id="">
                 {% for list in lists %}
-                <option class="show-class" data-bs-toggle="collapse" data-bs-parent=".list-control" data-bs-target="{{'#' + list['id']}}" value="{{list['name']}}" selected>{{list["name"]}}</option>
+                <option class="show-class fs-3" data-bs-toggle="collapse" data-bs-parent=".list-control" data-bs-target="{{'#' + list['id']}}" value="{{list['name']}}" selected>{{list["name"]}}</option>
                 {% endfor %}
             </select>
             {% for list in lists %}
@@ -32,7 +32,7 @@
                 {% for item in list["items"] %}
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <form action="/lists/{{list['id']}}/update" method="post">
                                 <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                                 <div class="input-group float-start">
@@ -47,15 +47,15 @@
                                     {% else %}
                                     <input id="{{list['id']}}" type="number" class="form-control item-price" step="any" value="0" readonly>
                                     {% endif %}
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
                                 </div>
                             </form>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-8">
                             <div class="d-flex h-100 w-100 justify-content-between">
                                 <h4>Notes:</h4>
                                 <p>{{item.notes}}</p>
-                                <button class="btn btn-primary item-note" type="button" data-item-id="{{item.id}}" data-list-id="{{list.id}}" data-bs-toggle="offcanvas" data-bs-target="#noteEditCanvas" aria-controls="noteEditCanvas">Edit Notes</button>
+                                <button class="btn btn-lg btn-primary item-note" type="button" data-item-id="{{item.id}}" data-list-id="{{list.id}}" data-bs-toggle="offcanvas" data-bs-target="#noteEditCanvas" aria-controls="noteEditCanvas">Edit Notes</button>
                             </div>
                         </div>
                     </div>
@@ -67,8 +67,8 @@
                 <li class="list-group-item">
                     <form action="/lists/{{list['id']}}/delete">
                         <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="submit" class="btn btn-danger float-end list-delete">Delete List</button>
+                        <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                        <button type="submit" class="btn btn-lg btn-danger float-end list-delete">Delete List</button>
                     </form>
                 </li>
             </ul>

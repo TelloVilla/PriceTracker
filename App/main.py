@@ -8,6 +8,7 @@ import pymongo
 import os
 import bcrypt
 import random
+import secrets
 import json
 import pandas as pd
 
@@ -27,10 +28,12 @@ records = db.register
 app = Flask(__name__)
 app.secret_key = "development"
 csrf = CSRFProtect(app)
+random_nonce = secrets.token_urlsafe()
 
+# Try reverse proxy content security policy
 # @app.after_request
 # def add_headers(resp):
-#     resp.headers['Content-Security-Policy']='default-src \'self\''
+#     resp.headers['Content-Security-Policy']= 'default-src \'self\'; script-src \'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js\' \'https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js\'; style-src \'self\' \'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css\'; object-src \'none\''
 #     return resp
 
 @app.route("/", methods=["post", "get"])
