@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request, url_for, session, redirect
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
+from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 import pymongo
 import os
@@ -22,6 +26,12 @@ records = db.register
 
 app = Flask(__name__)
 app.secret_key = "development"
+csrf = CSRFProtect(app)
+
+# @app.after_request
+# def add_headers(resp):
+#     resp.headers['Content-Security-Policy']='default-src \'self\''
+#     return resp
 
 @app.route("/", methods=["post", "get"])
 def index():
@@ -48,14 +58,7 @@ def index():
 
     return render_template("landing.html")
 
-@app.route("/lists")
-def lists():
-    if not "email" in session:
-        return redirect(url_for("index"))
 
-    user_found = users.find_one({"email": session["email"]})
-
-    return render_template("lists.html", lists=user_found["lists"])
 
 @app.route("/hub")
 def hub():
@@ -169,6 +172,14 @@ def items():
 
     return render_template("items.html")
 
+@app.route("/lists")
+def lists():
+    if not "email" in session:
+        return redirect(url_for("index"))
+
+    user_found = users.find_one({"email": session["email"]})
+
+    return render_template("lists.html", lists=user_found["lists"])
 
 @app.route("/lists/add", methods=("POST",))
 def add_list():
@@ -200,11 +211,12 @@ def add_item_to_list(list_id, item_id):
         if i["id"] == item_id:
             item_name = i["name"]
             price_list = sorted(i["prices"], key=lambda d: d["date"])
-            item_price = price_list[-1] or 0
+            
+            item_price = price_list[-1] if len(price_list) > 0 else 0
             break
 
 
-    new_item = {"id": item_id, "name": item_name, "qty": 1, "price": item_price}
+    new_item = {"id": item_id, "name": item_name, "qty": 1, "price": item_price, "notes": ""}
 
     list_query = {"email": session["email"]}
     list_update = {"$push": {"lists.$[i].items": new_item}}
@@ -212,6 +224,22 @@ def add_item_to_list(list_id, item_id):
 
     item_add = users.update_one(list_query, list_update, array_filters=options)
     return redirect(url_for("view"))
+
+@app.route("/lists/<list_id>/notes/<item_id>", methods=("POST",))
+def edit_notes(list_id, item_id):
+    if not "email" in session:
+        return redirect(url_for("index"))
+
+    item_note = request.form.get("notes")
+
+    user_query = {"email": session["email"]}
+    notes_update = {"$set": {"lists.$[i].items.$[t].notes": item_note}}
+    options = [
+        {"i.id": list_id}, {"t.id": item_id}
+    ]
+
+    users.update_one(user_query, notes_update, array_filters=options)
+    return redirect(url_for("lists"))
 
 @app.route("/lists/<list_id>/update", methods=("POST", ))
 def update_list(list_id):
@@ -244,6 +272,17 @@ def update_list(list_id):
     
     
     return redirect(url_for("lists"))
+
+@app.route("/lists/<list_id>/delete")
+def delete_list(list_id):
+    if not "email" in session:
+        return redirect(url_for("index"))
+
+    user_query = {"email": session["email"]}
+    list_pull = {"$pull": {"lists": {"id": list_id}}}
+    users.update_one(user_query, list_pull)
+    return redirect(url_for("lists"))
+
 
 @app.route("/register", methods=["post", "get"])
 def register():

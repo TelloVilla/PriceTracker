@@ -6,6 +6,7 @@
     <div class="row justify-content-md-center">
         <div class="col col-lg-3">
             <form action="" method="post">
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                 <div class="mb-3">
                     <label for="email" class="form-label"> Email Address</label>
                     <input name="email" type="email" class="form-control" id="emailInput" aria-describedby="email">

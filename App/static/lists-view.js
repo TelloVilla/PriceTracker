@@ -1,5 +1,4 @@
 window.onload = function(){
-    let listSelectors = document.getElementsByClassName("show-class")
 
     let prices = document.getElementsByClassName("item-price")
 
@@ -7,8 +6,6 @@ window.onload = function(){
         prices[p].value = Number(prices[p].value).toFixed(2)
     }
     
-    let total = 0;
-
     parsedLists = JSON.parse(Lists)
 
     parsedLists.forEach(l =>{
@@ -21,6 +18,28 @@ window.onload = function(){
         let totalEle = document.getElementById(l.id + "-total-price");
         totalEle.append(listTotal.toFixed(2))
     })
+
+    let deleteBtns = document.getElementsByClassName("list-delete")
+
+    for(let i = 0; i < deleteBtns.length; i++){
+        deleteBtns[i].onclick = function(e){
+            if(!confirm("Are you sure?")){
+                e.preventDefault()
+            }
+        }
+        
+    }
+
+    let noteBtns = document.getElementsByClassName("item-note")
+
+    console.log(noteBtns)
+
+    for(let i = 0; i < noteBtns.length; i++){
+        noteBtns[i].onclick = function(e){
+            let noteForm = document.getElementById("note-form")
+            noteForm.action = "/lists/" + noteBtns[i].dataset.listId + "/notes/" + noteBtns[i].dataset.itemId
+        }
+    }
 
     
 

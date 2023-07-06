@@ -11,6 +11,7 @@
     <div class="row justify-content-md-center mb-3">
         <div class="col col-lg-4">
             <form action="/lists/add" method="post">
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                 <div class="input-group">
                     <label class="form-control" for="list-name">List Name:</label>
                     <input class="form-control" name="list-name" id="list-name" type="text">
@@ -20,28 +21,44 @@
         </div>
     </div>
     <div class="row justify-content-md-center">
-        <div class="col col-lg-6">
+        <div class="col col-lg-8 list-control">
             <select class="form-select" name="" id="">
                 {% for list in lists %}
-                <option class="show-class" data-bs-toggle="collapse" data-bs-target="{{'#' + list['id']}}" value="{{list['name']}}" selected>{{list["name"]}}</option>
+                <option class="show-class" data-bs-toggle="collapse" data-bs-parent=".list-control" data-bs-target="{{'#' + list['id']}}" value="{{list['name']}}" selected>{{list["name"]}}</option>
                 {% endfor %}
             </select>
             {% for list in lists %}
-            <ul class="collapse list-group mt-3" id="{{list['id']}}">
+            <ul class="collapse list-group mt-3" id="{{list['id']}}" data-bs-parent=".list-control">
                 {% for item in list["items"] %}
                 <li class="list-group-item">
-                    <form action="/lists/{{list['id']}}/update" method="post">
-                        <div class="input-group float-start">
-                            <span class="input-group-text id-form">Item id:</span>
-                            <input type="text" class="form-control id-form" name="item-id" value="{{item.id}}" readonly>
-                            <span class="input-group-text">{{item.name}}</span>
-                            <span class="input-group-text">Qty:</span>
-                            <input class="form-control" name="item-qty" value="{{item.qty}}" type="number">
-                            <span class="input-group-text">Total:</span>
-                            <input id="{{list['id']}}" type="number" class="form-control item-price" step="any" value="{{item.price.price * item.qty}}" readonly>
-                            <button type="submit" class="btn btn-primary">Update</button>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <form action="/lists/{{list['id']}}/update" method="post">
+                                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                                <div class="input-group float-start">
+                                    <span class="input-group-text id-form">Item id:</span>
+                                    <input type="text" class="form-control id-form" name="item-id" value="{{item.id}}" readonly>
+                                    <span class="input-group-text">{{item.name}}</span>
+                                    <span class="input-group-text">Qty:</span>
+                                    <input class="form-control" name="item-qty" value="{{item.qty}}" type="number">
+                                    <span class="input-group-text">Total:</span>
+                                    {% if item.price.price %}
+                                    <input id="{{list['id']}}" type="number" class="form-control item-price" step="any" value="{{item.price.price * item.qty}}" readonly>
+                                    {% else %}
+                                    <input id="{{list['id']}}" type="number" class="form-control item-price" step="any" value="0" readonly>
+                                    {% endif %}
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                        <div class="col-lg-6">
+                            <div class="d-flex h-100 w-100 justify-content-between">
+                                <h4>Notes:</h4>
+                                <p>{{item.notes}}</p>
+                                <button class="btn btn-primary item-note" type="button" data-item-id="{{item.id}}" data-list-id="{{list.id}}" data-bs-toggle="offcanvas" data-bs-target="#noteEditCanvas" aria-controls="noteEditCanvas">Edit Notes</button>
+                            </div>
+                        </div>
+                    </div>
                 </li>
                 {% endfor %}
                 <li class="list-group-item">
@@ -49,12 +66,31 @@
                 </li>
                 <li class="list-group-item">
                     <form action="/lists/{{list['id']}}/delete">
+                        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <button type="submit" class="btn btn-danger float-end">Delete List</button>
+                        <button type="submit" class="btn btn-danger float-end list-delete">Delete List</button>
                     </form>
                 </li>
             </ul>
             {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="offcanvas offcanvas-bottom noteEdit" tabindex="-1" id="noteEditCanvas" aria-labelledby="noteEditLabel">
+    <div class="offcanvas-header">
+        <h6 class="offcanvas-title" id="noteEditLabel">Edit Notes</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-3">
+                <form id="note-form" action="#" method="post">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                    <label for="item-notes">Notes</label>
+                    <textarea class="form-control" name="notes" id="item-notes" cols="30" rows="5"></textarea>
+                    <button name="edit" type="submit" class="btn btn-primary float-end mt-3">Edit</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
